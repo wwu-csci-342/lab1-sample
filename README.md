@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # Replication
-=======
-# Sample 1
->>>>>>> 50430fdbec76653966908cc391678cc40a5531aa
 
 To replicate this project, please clone it to your local computer first.
 
