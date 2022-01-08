@@ -1,6 +1,6 @@
 const PlanetCard = ({planet}) => {
   return (
-    <div className="App">
+    <div>
       <h3>{planet.name}</h3>
       <p>Gravity: {planet.gravity}</p>
       <p>Population: {planet.population}</p>

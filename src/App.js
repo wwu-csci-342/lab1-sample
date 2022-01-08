@@ -1,56 +1,67 @@
-import { useEffect, useState } from "react";
 import "./App.css";
-import StarshipCard from "./components/StarshipCard";
-import PlanetCard from "./components/PlanetCard";
+import { Suspense, lazy } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
+import NavBar from "./layout/NavBar";
+import Spinner from "react-bootstrap/Spinner";
+const PlanetsView = lazy(() => import("./views/PlanetsView"));
+const PeopleView = lazy(() => import("./views/PeopleView"));
+const StarshipsView = lazy(() => import("./views/StarshipsView"));
 
 function App() {
-  const [starships, setStarships] = useState([]);
-  const [planets, setPlanets] = useState([]);
-
-  useEffect(() => {
-    fetch("https://swapi.dev/api/starships/")
-      .then((response) => response.json())
-      .then((data) => setStarships(data.results));
-  }, []);
-
-  const getPlanets = async () => {
-    let response = await fetch("https://swapi.dev/api/planets/");
-    let jsonData = await response.json();
-    setPlanets(jsonData.results);
-    setStarships([]);
-  };
-
-  const getStarships = async () => {
-    let response = await fetch("https://swapi.dev/api/starships/");
-    let jsonData = await response.json();
-    setStarships(jsonData.results);
-    setPlanets([]);
-  };
-
   return (
-    <div className="App">
-      <div className="Sidebar">
-        <p>
-          <button onClick={getPlanets} disabled={planets.length}>
-            View planets
-          </button>
-        </p>
-        <p>
-          <button onClick={getStarships} disabled={starships.length}>
-            View starships
-          </button>
-        </p>
-      </div>
-      <div>
-        {starships.map((starship, index) => {
-          return <StarshipCard starship={starship} key={index} />;
-        })}
-        {planets.map((planet, index) => {
-          return <PlanetCard planet={planet} key={index} />;
-        })}
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigation />}>
+          <Route
+            index
+            element={
+              <Suspense fallback={<Loading />}>
+                <PlanetsView />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/people"
+            element={
+              <Suspense fallback={<Loading />}>
+                <PeopleView />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/starships"
+            element={
+              <Suspense fallback={<Loading />}>
+                <StarshipsView />
+              </Suspense>
+            }
+          />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
+
+const Navigation = () => {
+  return (
+    <>
+      <NavBar />
+      <Outlet />
+    </>
+  );
+};
+
+const Loading = () => {
+  return (
+    <div className="App">
+      <Spinner animation="border" />
+    </div>
+  );
+};
 
 export default App;
